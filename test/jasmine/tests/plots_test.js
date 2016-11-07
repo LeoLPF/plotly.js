@@ -427,4 +427,89 @@ describe('Test Plots', function() {
             expect(gd._transitioning).toBeUndefined();
         });
     });
+
+    describe('extendLayout', function() {
+
+        it('extend each container items', function() {
+            var dest = {
+                annotations: [{
+                    text: '1',
+                    x: 1,
+                    y: 1
+                }, {
+                    text: '2',
+                    x: 2,
+                    y: 2
+                }]
+            };
+
+            var src = {
+                annotations: [{
+                    text: '1-new'
+                }, {
+                    text: '2-new'
+                }]
+            };
+
+            Plots.extendLayout(dest, src);
+
+            expect(dest).toEqual({
+                annotations: [{
+                    text: '1-new',
+                    x: 1,
+                    y: 1
+                }, {
+                    text: '2-new',
+                    x: 2,
+                    y: 2
+                }]
+            });
+        });
+
+        it('clears container items when applying null src items', function() {
+            var dest = {
+                annotations: [{
+                    text: '1',
+                    x: 1,
+                    y: 1
+                }, {
+                    text: '2',
+                    x: 2,
+                    y: 2
+                }]
+            };
+
+            var src = {
+                annotations: [null, null]
+            };
+
+            Plots.extendLayout(dest, src);
+
+            expect(dest).toEqual({
+                annotations: [{}, {}]
+            });
+        });
+
+        it('clears container applying null src', function() {
+            var dest = {
+                annotations: [{
+                    text: '1',
+                    x: 1,
+                    y: 1
+                }, {
+                    text: '2',
+                    x: 2,
+                    y: 2
+                }]
+            };
+
+            var src = { annotations: null };
+
+            Plots.extendLayout(dest, src);
+
+            expect(dest).toEqual({
+                annotations: null
+            });
+        });
+    });
 });

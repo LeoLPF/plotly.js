@@ -1549,8 +1549,14 @@ plots.extendObjectWithContainers = function(dest, src, containerPaths) {
         for(i = 0; i < containerPaths.length; i++) {
             containerProp = Lib.nestedProperty(expandedObj, containerPaths[i]);
             containerVal = containerProp.get();
-            containerProp.set(null);
-            Lib.nestedProperty(containerObj, containerPaths[i]).set(containerVal);
+
+            if(!containerVal) {
+                Lib.nestedProperty(containerObj, containerPaths[i]).set(null);
+            }
+            else {
+                containerProp.set(null);
+                Lib.nestedProperty(containerObj, containerPaths[i]).set(containerVal);
+            }
         }
     }
 
@@ -1564,15 +1570,20 @@ plots.extendObjectWithContainers = function(dest, src, containerPaths) {
             if(!srcContainer) continue;
 
             destProp = Lib.nestedProperty(dest, containerPaths[i]);
-
             destContainer = destProp.get();
+
             if(!Array.isArray(destContainer)) {
                 destContainer = [];
                 destProp.set(destContainer);
             }
 
             for(j = 0; j < srcContainer.length; j++) {
-                destContainer[j] = plots.extendObjectWithContainers(destContainer[j], srcContainer[j]);
+                var srcObj = srcContainer[j];
+
+                if(srcObj === null) destContainer[j] = {};
+                else {
+                    destContainer[j] = plots.extendObjectWithContainers(destContainer[j], srcObj);
+                }
             }
 
             destProp.set(destContainer);
